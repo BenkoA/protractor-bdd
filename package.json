@@ -1,0 +1,26 @@
+{
+  "name": "poc-protractor-bdd",
+  "version": "1.0.0",
+  "description": "POC for Protractor - Cucumber integration",
+  "main": "protractor.conf.js",
+  "scripts": {
+    "webdriver": "webdriver-manager update --standalone && webdriver-manager start",
+    "test": "protractor protractor.conf.js"
+  },
+  "author": "Adrian Benko",
+  "license": "ISC",
+  "dependencies": {
+    "q": "^1.4.1"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^6.0.0",
+    "cucumber": "^2.0.0-rc.8",
+    "protractor": "^5.1.1",
+    "protractor-cucumber-framework": "^1.0.1"
+  },
+  "cucumberConf": {
+    "version1": "1.3.1",
+    "version2": "2.0.0-rc.7"
+  }
+}
