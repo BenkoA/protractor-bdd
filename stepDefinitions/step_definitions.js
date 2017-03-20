@@ -4,6 +4,11 @@ chai.use(chaiAsPromised);
 var expect = chai.expect;
 var {defineSupportCode} = require('cucumber');
 
+var myAccountPage = require('../pages/myAccountPage');
+var loginPage = require('../pages/loginPage');
+var homePage = require('../pages/homePage');
+var footerPage = require('../pages/footerPage');
+
 defineSupportCode(({Given, When, Then, setDefaultTimeout}) => {
 
     setDefaultTimeout(60 * 1000);
@@ -34,46 +39,23 @@ defineSupportCode(({Given, When, Then, setDefaultTimeout}) => {
             .and.notify(callback);
     });
 
-    When(/^I click the Login button$/, function() {
-        var loginItemLocator = '//div[@onclick="go(\'login\')" and not(contains(@class, \'hidden\'))]/div';
+    /*
+     *   Mobile Rebrush Scenario
+     */
 
-        waitForElement(loginItemLocator, 5000);
-        expect((element(by.xpath(loginItemLocator))).isPresent()).to.eventually.equal(true);
-        element(by.xpath(loginItemLocator)).click();
+    When(/^I click the Login button$/, function() {
+        homePage.clickOnLoginButton();
     });
 
     Then(/^I login with username "([^"]*)" and password "([^"]*)"$/, function(username, password) {
-        var userInput = element(by.name('username'));
-        var passwordInput = element(by.name('password'));
-        var loginButton = element(by.className('submit'));
-
-        waitForElement('//div[@id="page2"]//input[@name="username"]',2000);
-        userInput.sendKeys(username);
-        passwordInput.sendKeys(password);
-        loginButton.click();
+        loginPage.loginWithUsernameAndPassword(username, password);
     });
 
     Then(/^I should see the "([^"]*)" name in the header$/, function(username) {
-        var myAccountButton = '//div[@id="page2"]//div[@onclick="go(\'account\', \'none\')"]';
-        //waitForElement(myAccountButton, 2000);
-        //element(by.xpath(myAccountButton)).click();
+        footerPage.clickOnMyAccountButton();
 
-        var EC = protractor.ExpectedConditions;
-        browser.wait(EC.elementToBeClickable(element(by.xpath(myAccountButton))), 5000);
-        element(by.xpath(myAccountButton)).click();
-
-
-        var personalDetails_login = '//div[@id="page1"]//div[@class="bartitle"]';
-        waitForElement(personalDetails_login,2000);
-        expect(element(by.xpath(personalDetails_login)).getText()).to.eventually.equal(username);
+        expect((myAccountPage.getName()).getText()).to.eventually.equal(username);
     });
 
-
-    var waitForElement = function(selector, waitFor) {
-        waitFor = waitFor || 5000;
-        browser.driver.manage().timeouts().implicitlyWait(waitFor);
-        browser.driver.findElement(by.xpath(selector));
-        browser.driver.manage().timeouts().implicitlyWait(0);
-    }
 
 });

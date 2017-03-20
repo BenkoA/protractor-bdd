@@ -14,4 +14,4 @@ Feature: Running Cucumber with Protractor
     Given I go to "https://mobile-staging.tipdev.com/"
     When I click the Login button
     And I login with username "protractor_mt_test" and password "tester123"
-    Then I should see the "Protractor Mttest" name in the header
+    Then I should see the "Protractor Mttest (Protractor_mt_test)" name in the header
