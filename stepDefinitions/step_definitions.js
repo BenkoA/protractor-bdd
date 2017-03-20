@@ -13,7 +13,7 @@ defineSupportCode(({Given, When, Then, setDefaultTimeout}) => {
         var loadingWindow = '//div[@id="loading"]';
         var EC=protractor.ExpectedConditions;
 
-        browser.driver.wait(EC.not(EC.presenceOf(element(by.xpath(loadingWindow)))), 10000);
+        browser.driver.wait(EC.not(EC.presenceOf(element(by.xpath(loadingWindow)))), 20000);
         expect((element(by.xpath(loadingWindow))).isPresent()).to.eventually.equal(false)
             .and.notify(callback);
     });
@@ -34,30 +34,46 @@ defineSupportCode(({Given, When, Then, setDefaultTimeout}) => {
             .and.notify(callback);
     });
 
-    When(/^I click the Login button$/, function(callback) {
-        var closeModalWindowLocator = '//*[@id="tipico-welcome-promo"]//div[@class="close-modal"]';
+    When(/^I click the Login button$/, function() {
         var loginItemLocator = '//div[@onclick="go(\'login\')" and not(contains(@class, \'hidden\'))]/div';
 
-        expect((element(by.xpath(closeModalWindowLocator))).isPresent()).to.eventually.equal(true);
-        element(by.xpath(closeModalWindowLocator)).click();
-
+        waitForElement(loginItemLocator, 5000);
         expect((element(by.xpath(loginItemLocator))).isPresent()).to.eventually.equal(true);
         element(by.xpath(loginItemLocator)).click();
     });
 
     Then(/^I login with username "([^"]*)" and password "([^"]*)"$/, function(username, password) {
-        var userInput = element(by.name('usename'));
+        var userInput = element(by.name('username'));
         var passwordInput = element(by.name('password'));
         var loginButton = element(by.className('submit'));
 
+        waitForElement('//div[@id="page2"]//input[@name="username"]',2000);
         userInput.sendKeys(username);
         passwordInput.sendKeys(password);
         loginButton.click();
     });
 
-    Then(/^I should see the "([^"]*)" name in the header$/, function(callback) {
-        var myBetsLocator = '//div[@class="footer-nav"]//div[contains(text(),\'My bets\')]';
-        expect(element(by.xpath(myBetsLocator).getText())).to.eventually.equal(username).and.notify(callback);
+    Then(/^I should see the "([^"]*)" name in the header$/, function(username) {
+        var myAccountButton = '//div[@id="page2"]//div[@onclick="go(\'account\', \'none\')"]';
+        //waitForElement(myAccountButton, 2000);
+        //element(by.xpath(myAccountButton)).click();
+
+        var EC = protractor.ExpectedConditions;
+        browser.wait(EC.elementToBeClickable(element(by.xpath(myAccountButton))), 5000);
+        element(by.xpath(myAccountButton)).click();
+
+
+        var personalDetails_login = '//div[@id="page1"]//div[@class="bartitle"]';
+        waitForElement(personalDetails_login,2000);
+        expect(element(by.xpath(personalDetails_login)).getText()).to.eventually.equal(username);
     });
+
+
+    var waitForElement = function(selector, waitFor) {
+        waitFor = waitFor || 5000;
+        browser.driver.manage().timeouts().implicitlyWait(waitFor);
+        browser.driver.findElement(by.xpath(selector));
+        browser.driver.manage().timeouts().implicitlyWait(0);
+    }
 
 });
